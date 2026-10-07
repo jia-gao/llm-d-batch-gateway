@@ -45,9 +45,8 @@ func (u jobProgressUpdater) UpdateProgressCounts(ctx context.Context, jobID stri
 	return u.fenced(u.inner.UpdateProgressCounts(ctx, u.jobID, u.epoch, counts))
 }
 
-// CheckJobStatus runs on every progress interval, so a job with no new results
-// still notices lost ownership or a cancel. It reads the job's row instead of
-// writing it, so a quiet interval adds no write.
+// CheckJobStatus calls onFencedOut when epoch no longer owns the job and
+// onCancelling when the job is cancelling. Other errors are returned.
 func (u jobProgressUpdater) CheckJobStatus(ctx context.Context, jobID string) error {
 	status, err := u.inner.CheckJobStatus(ctx, u.jobID, u.epoch)
 	if err != nil {
