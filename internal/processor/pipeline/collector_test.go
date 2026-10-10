@@ -422,6 +422,8 @@ func TestProgressTracker_Tick(t *testing.T) {
 		{
 			name: "checks job status on quiet ticks without writing",
 			done: func(u *countingUpdater) bool { return u.getChecks() >= 3 },
+			// Only the initial push from Run; quiet ticks add none.
+			wantCalls: 1,
 		},
 		{
 			name:        "retries a failed push on the next tick without new results",
